@@ -29,7 +29,7 @@ jobs:
 
       - name: Run tests & parse final grade
         run: |
-          output=$(python -m unittest test_assignment.py)
+          output=$(python test_assignment.py)
           echo "$output"
 
           # Parse the line "Final Grade: X/100"
