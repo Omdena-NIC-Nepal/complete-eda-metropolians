@@ -6,7 +6,6 @@ import re
 import pandas as pd
 import numpy as np
 
-
 class TestClimateEDA(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -22,20 +21,24 @@ class TestClimateEDA(unittest.TestCase):
         cls.code_cells = [cell for cell in cls.notebook.cells if cell['cell_type'] == 'code']
         cls.markdown_cells = [cell for cell in cls.notebook.cells if cell['cell_type'] == 'markdown']
 
-        # Initialize the `all_code` and `all_markdown` attributes
+        # Ensure attributes are initialized properly
         cls.all_code = '\n'.join([cell['source'] for cell in cls.code_cells]) if cls.code_cells else ""
         cls.all_markdown = '\n'.join([cell['source'] for cell in cls.markdown_cells]) if cls.markdown_cells else ""
 
-        # Debugging: Print first 500 characters to ensure `all_code` is properly initialized
-        print(f"All Code: {cls.all_code[:500]}")
+        # 🔥 Debugging output for GitHub Actions 🔥
+        print("DEBUG: Extracted Code Cells Count:", len(cls.code_cells))
+        print("DEBUG: all_code first 500 chars:", cls.all_code[:500])
 
-        # Check if data was loaded properly
+        # Ensure the data file is properly loaded
         for cell in cls.code_cells:
             if 'df = pd.read_csv' in cell['source']:
                 match = re.search(r'(\w+)\s*=\s*pd\.read_csv', cell['source'])
                 if match:
                     cls.df_name = match.group(1)
                     break
+
+
+
         
     def test_required_libraries(self):
         """Test that all required libraries are imported"""
