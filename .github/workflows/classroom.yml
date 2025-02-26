@@ -34,7 +34,7 @@ jobs:
       - name: Calculate grade
         run: |
           # Use a HEREDOC to embed Python code safely
-          GRADE=$(python - <<EOF
+          GRADE=$(python - <<-EOF
 import unittest
 from test_assignment import TestClimateEDA
 
