@@ -139,20 +139,16 @@ class TestClimateEDA(unittest.TestCase):
             self.assertIn(var, self.__class__.all_code, f"Climate variable {var} not analyzed")
 
     def calculate_grade(self):
-        """Calculate the grade based on passing tests."""
-        test_methods = [method for method in dir(self) if method.startswith('test_')]
-        total_tests = len(test_methods)
+        """Calculate the grade based on passing tests"""
+        test_suite = unittest.TestLoader().loadTestsFromTestCase(TestClimateEDA)
+        test_runner = unittest.TextTestRunner(verbosity=2)
+        test_result = test_runner.run(test_suite)  # Run tests properly
 
-        passed_tests = 0
-        for test in test_methods:
-            try:
-                getattr(self, test)()  # Run the test manually
-                passed_tests += 1
-            except AssertionError:
-                continue
+        total_tests = test_result.testsRun
+        passed_tests = total_tests - len(test_result.failures) - len(test_result.errors)
 
         # Calculate grade (out of 100)
-        grade = (passed_tests / total_tests) * 100
+        grade = (passed_tests / total_tests) * 100 if total_tests > 0 else 0
         return round(grade)
 
 
@@ -162,6 +158,14 @@ if __name__ == '__main__':
     test_result = test_runner.run(test_suite)
 
     # Calculate and print grade
-    test_case = TestClimateEDA()
-    grade = test_case.calculate_grade()
+    test_instance = TestClimateEDA()
+    grade = test_instance.calculate_grade()
     print(f"\nFinal Grade: {grade}/100")
+
+    # ✅ Debugging: Print test results in GitHub Actions
+    print("\n========= DEBUG: GitHub Actions Test Results =========")
+    print(f"Total Tests Run: {test_result.testsRun}")
+    print(f"Failures: {len(test_result.failures)}")
+    print(f"Errors: {len(test_result.errors)}")
+    print("======================================================")
+
