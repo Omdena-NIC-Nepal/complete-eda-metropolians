@@ -31,24 +31,9 @@ jobs:
         run: |
           python -m unittest test_assignment.py
 
-      - name: Write Python script to calculate grade
+      - name: Calculate grade (one-liner)
         run: |
-          cat <<EOF > calc_grade.py
-from test_assignment import TestClimateEDA
-
-try:
-    test_case = TestClimateEDA()
-    grade = test_case.calculate_grade()
-    print(grade)
-except Exception as e:
-    print(f'Error calculating grade: {e}')
-    grade = 0
-print(grade)
-EOF
-
-      - name: Calculate grade
-        run: |
-          GRADE=$(python calc_grade.py)
+          GRADE=$(python -c "from test_assignment import TestClimateEDA; print(TestClimateEDA().calculate_grade())")
           echo "Extracted Grade: $GRADE"
 
           if [[ -z "$GRADE" ]]; then
