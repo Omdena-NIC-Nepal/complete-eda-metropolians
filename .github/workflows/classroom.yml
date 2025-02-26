@@ -22,11 +22,13 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install numpy pandas matplotlib seaborn nbformat nbconvert jupyter_client ipykernel
+        # Install Jupyter kernel for Python 3
+        python -m ipykernel install --user --name python3 --display-name "Python 3"
 
     - name: Run tests and calculate grade
       run: |
-        # Generate climate data
-        #python climate_data.py
+        # Generate climate data (Uncomment this if the script exists and is required)
+        # python climate_data.py
         
         # Run tests
         python -m unittest test_assignment.py
@@ -34,7 +36,7 @@ jobs:
         # Extract grade from test output
         GRADE=$(python -c "
         import unittest
-        from test_assignment import TestClimateEDA
+        from test_climate_eda import TestClimateEDA
         test_case = TestClimateEDA()
         print(test_case.calculate_grade())
           ")
