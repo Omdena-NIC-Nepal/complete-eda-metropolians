@@ -27,13 +27,14 @@ jobs:
         run: |
           jupyter nbconvert --to notebook --execute climate_eda.ipynb --output executed_climate_eda.ipynb
 
-      - name: Run tests
+      - name: Run tests & parse final grade
         run: |
-          python -m unittest test_assignment.py
+          output=$(python -m unittest test_assignment.py)
+          echo "$output"
 
-      - name: Calculate grade (one-liner)
-        run: |
-          GRADE=$(python -c "from test_assignment import TestClimateEDA; print(TestClimateEDA().calculate_grade())")
+          # Parse the line "Final Grade: X/100"
+          GRADE=$(echo "$output" | grep "Final Grade:" | sed -E 's/.*Final Grade: ([0-9]+)\/100.*/\1/')
+
           echo "Extracted Grade: $GRADE"
 
           if [[ -z "$GRADE" ]]; then
