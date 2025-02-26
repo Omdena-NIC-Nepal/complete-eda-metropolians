@@ -34,7 +34,6 @@ jobs:
       - name: Write Python script to calculate grade
         run: |
           cat <<EOF > calc_grade.py
-import unittest
 from test_assignment import TestClimateEDA
 
 try:
