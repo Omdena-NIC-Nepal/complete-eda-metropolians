@@ -6,37 +6,36 @@ import re
 import pandas as pd
 import numpy as np
 
+
 class TestClimateEDA(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         # Load the notebook
         with open('climate_eda.ipynb', 'r', encoding='utf-8') as f:
             cls.notebook = nbformat.read(f, as_version=4)
-        
+
         # Execute the notebook
         ep = ExecutePreprocessor(timeout=600, kernel_name='python3')
         ep.preprocess(cls.notebook, {'metadata': {'path': '.'}})
-        
+
         # Extract code and markdown cells
         cls.code_cells = [cell for cell in cls.notebook.cells if cell['cell_type'] == 'code']
         cls.markdown_cells = [cell for cell in cls.notebook.cells if cell['cell_type'] == 'markdown']
-        
+
         # Initialize the `all_code` and `all_markdown` attributes
-        cls.all_code = '\n'.join([cell['source'] for cell in cls.code_cells])  # join code from all code cells
-        cls.all_markdown = '\n'.join([cell['source'] for cell in cls.markdown_cells])  # join markdown from all markdown cells
-        
-        # Debugging: Print the contents of all_code
-        print(f"All Code: {cls.all_code[:500]}")  # Print the first 500 characters for brevity
-        
+        cls.all_code = '\n'.join([cell['source'] for cell in cls.code_cells]) if cls.code_cells else ""
+        cls.all_markdown = '\n'.join([cell['source'] for cell in cls.markdown_cells]) if cls.markdown_cells else ""
+
+        # Debugging: Print first 500 characters to ensure `all_code` is properly initialized
+        print(f"All Code: {cls.all_code[:500]}")
+
         # Check if data was loaded properly
         for cell in cls.code_cells:
             if 'df = pd.read_csv' in cell['source']:
-                # Get variable name of dataframe
                 match = re.search(r'(\w+)\s*=\s*pd\.read_csv', cell['source'])
                 if match:
                     cls.df_name = match.group(1)
                     break
-
         
     def test_required_libraries(self):
         """Test that all required libraries are imported"""
