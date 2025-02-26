@@ -7,6 +7,9 @@ import pandas as pd
 import numpy as np
 
 class TestClimateEDA(unittest.TestCase):
+    all_code = ""  # ✅ Explicitly define at the class level
+    all_markdown = ""
+
     @classmethod
     def setUpClass(cls):
         # Load the notebook
@@ -21,14 +24,9 @@ class TestClimateEDA(unittest.TestCase):
         cls.code_cells = [cell for cell in cls.notebook.cells if cell['cell_type'] == 'code']
         cls.markdown_cells = [cell for cell in cls.notebook.cells if cell['cell_type'] == 'markdown']
 
-        # Ensure attributes are initialized properly
-        cls.all_code = ""
-        cls.all_markdown = ""
-
-        if cls.code_cells:
-            cls.all_code = '\n'.join([cell.get('source', '') for cell in cls.code_cells if 'source' in cell])
-        if cls.markdown_cells:
-            cls.all_markdown = '\n'.join([cell.get('source', '') for cell in cls.markdown_cells if 'source' in cell])
+        # ✅ Ensure attributes are initialized properly
+        cls.all_code = '\n'.join([cell.get('source', '') for cell in cls.code_cells]) if cls.code_cells else ""
+        cls.all_markdown = '\n'.join([cell.get('source', '') for cell in cls.markdown_cells]) if cls.markdown_cells else ""
 
         # 🔥 Debugging output for GitHub Actions 🔥
         print("DEBUG: Extracted Code Cells Count:", len(cls.code_cells))
@@ -43,6 +41,7 @@ class TestClimateEDA(unittest.TestCase):
                 if match:
                     cls.df_name = match.group(1)
                     break
+
 
     
     
