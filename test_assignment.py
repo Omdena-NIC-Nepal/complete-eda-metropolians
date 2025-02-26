@@ -25,6 +25,9 @@ class TestClimateEDA(unittest.TestCase):
         cls.all_code = '\n'.join([cell['source'] for cell in cls.code_cells])  # join code from all code cells
         cls.all_markdown = '\n'.join([cell['source'] for cell in cls.markdown_cells])  # join markdown from all markdown cells
         
+        # Debugging: Print the contents of all_code
+        print(f"All Code: {cls.all_code[:500]}")  # Print the first 500 characters for brevity
+        
         # Check if data was loaded properly
         for cell in cls.code_cells:
             if 'df = pd.read_csv' in cell['source']:
