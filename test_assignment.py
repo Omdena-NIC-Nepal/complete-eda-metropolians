@@ -22,8 +22,13 @@ class TestClimateEDA(unittest.TestCase):
         cls.markdown_cells = [cell for cell in cls.notebook.cells if cell['cell_type'] == 'markdown']
 
         # Ensure attributes are initialized properly
-        cls.all_code = '\n'.join([cell['source'] for cell in cls.code_cells if 'source' in cell]) if cls.code_cells else ""
-        cls.all_markdown = '\n'.join([cell['source'] for cell in cls.markdown_cells if 'source' in cell]) if cls.markdown_cells else ""
+        cls.all_code = ""
+        cls.all_markdown = ""
+
+        if cls.code_cells:
+            cls.all_code = '\n'.join([cell.get('source', '') for cell in cls.code_cells if 'source' in cell])
+        if cls.markdown_cells:
+            cls.all_markdown = '\n'.join([cell.get('source', '') for cell in cls.markdown_cells if 'source' in cell])
 
         # 🔥 Debugging output for GitHub Actions 🔥
         print("DEBUG: Extracted Code Cells Count:", len(cls.code_cells))
@@ -38,6 +43,9 @@ class TestClimateEDA(unittest.TestCase):
                 if match:
                     cls.df_name = match.group(1)
                     break
+
+    
+    
 
     def test_required_libraries(self):
         """Test that all required libraries are imported"""
