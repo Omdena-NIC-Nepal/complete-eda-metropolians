@@ -9,6 +9,7 @@ on:
 jobs:
   grade:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v2
 
@@ -32,7 +33,7 @@ jobs:
 
       - name: Write Python script to calculate grade
         run: |
-          cat << 'EOF' > calc_grade.py
+          cat <<EOF > calc_grade.py
 import unittest
 from test_assignment import TestClimateEDA
 
