@@ -22,16 +22,18 @@ class TestClimateEDA(unittest.TestCase):
         cls.markdown_cells = [cell for cell in cls.notebook.cells if cell['cell_type'] == 'markdown']
 
         # Ensure attributes are initialized properly
-        cls.all_code = '\n'.join([cell['source'] for cell in cls.code_cells]) if cls.code_cells else ""
-        cls.all_markdown = '\n'.join([cell['source'] for cell in cls.markdown_cells]) if cls.markdown_cells else ""
+        cls.all_code = '\n'.join([cell['source'] for cell in cls.code_cells if 'source' in cell]) if cls.code_cells else ""
+        cls.all_markdown = '\n'.join([cell['source'] for cell in cls.markdown_cells if 'source' in cell]) if cls.markdown_cells else ""
 
         # 🔥 Debugging output for GitHub Actions 🔥
         print("DEBUG: Extracted Code Cells Count:", len(cls.code_cells))
+        print("DEBUG: Extracted Markdown Cells Count:", len(cls.markdown_cells))
         print("DEBUG: all_code first 500 chars:", cls.all_code[:500])
+        print("DEBUG: all_markdown first 500 chars:", cls.all_markdown[:500])
 
         # Ensure the data file is properly loaded
         for cell in cls.code_cells:
-            if 'df = pd.read_csv' in cell['source']:
+            if 'df = pd.read_csv' in cell.get('source', ''):
                 match = re.search(r'(\w+)\s*=\s*pd\.read_csv', cell['source'])
                 if match:
                     cls.df_name = match.group(1)
@@ -80,6 +82,12 @@ class TestClimateEDA(unittest.TestCase):
         
     def test_bivariate_analysis(self):
         """Test for bivariate analysis"""
+                # Check if all_code is initialized before accessing it
+        if not hasattr(self, 'all_code') or self.all_code == "":
+            self.fail("all_code is not initialized or is empty.")
+        
+
+        # Proceed with the bivariate analysis test
         bivariate_vis_patterns = [
             r"scatter(plot)?\(",
             r"reg(plot)?\(",
