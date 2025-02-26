@@ -20,8 +20,10 @@ class TestClimateEDA(unittest.TestCase):
         # Extract code and markdown cells
         cls.code_cells = [cell for cell in cls.notebook.cells if cell['cell_type'] == 'code']
         cls.markdown_cells = [cell for cell in cls.notebook.cells if cell['cell_type'] == 'markdown']
-        cls.all_code = '\n'.join([cell['source'] for cell in cls.code_cells])
-        cls.all_markdown = '\n'.join([cell['source'] for cell in cls.markdown_cells])
+        
+        # Initialize the `all_code` and `all_markdown` attributes
+        cls.all_code = '\n'.join([cell['source'] for cell in cls.code_cells])  # join code from all code cells
+        cls.all_markdown = '\n'.join([cell['source'] for cell in cls.markdown_cells])  # join markdown from all markdown cells
         
         # Check if data was loaded properly
         for cell in cls.code_cells:
@@ -31,6 +33,7 @@ class TestClimateEDA(unittest.TestCase):
                 if match:
                     cls.df_name = match.group(1)
                     break
+
         
     def test_required_libraries(self):
         """Test that all required libraries are imported"""
