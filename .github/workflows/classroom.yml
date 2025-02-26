@@ -9,7 +9,6 @@ on:
 jobs:
   grade:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
 
@@ -31,10 +30,9 @@ jobs:
         run: |
           python -m unittest test_assignment.py
 
-      - name: Calculate grade
+      - name: Write Python script to calculate grade
         run: |
-          # Use a HEREDOC to embed Python code safely
-          GRADE=$(python - <<-EOF
+          cat << 'EOF' > calc_grade.py
 import unittest
 from test_assignment import TestClimateEDA
 
@@ -47,12 +45,12 @@ except Exception as e:
     grade = 0
 print(grade)
 EOF
-          )
 
-          # Debugging Output
+      - name: Calculate grade
+        run: |
+          GRADE=$(python calc_grade.py)
           echo "Extracted Grade: $GRADE"
 
-          # Ensure GRADE is not empty before setting it
           if [[ -z "$GRADE" ]]; then
             echo 'GRADE could not be determined! Setting to 0.'
             GRADE=0
