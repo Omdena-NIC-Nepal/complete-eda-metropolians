@@ -151,15 +151,21 @@ class TestClimateEDA(unittest.TestCase):
 
     def calculate_grade(self):
         """Calculate the grade based on passing tests"""
-        # Use test_result from unittest runner instead of running tests again
-        total_tests = test_result.testsRun  # ✅ Get number of tests executed
-        failed_tests = len(test_result.failures) + len(test_result.errors)  # ❌ Count failed & error tests
-        
-        # Calculate grade
-        passed_tests = total_tests - failed_tests
-        grade = (passed_tests / total_tests) * 100 if total_tests > 0 else 0
-        
+        test_methods = [method for method in dir(self) if method.startswith('test_')]
+        total_tests = len(test_methods)  # ✅ Corrected: Get number of test methods
+
+        passed_tests = 0
+        for test in test_methods:
+            try:
+                getattr(self, test)()  # Run test manually
+                passed_tests += 1
+            except AssertionError:
+                continue
+
+        # Calculate grade (out of 100)
+        grade = (passed_tests / total_tests) * 100
         return round(grade)
+
   
 
 
