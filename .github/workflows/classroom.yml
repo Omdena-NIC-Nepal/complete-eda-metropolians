@@ -11,29 +11,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.8'
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install numpy pandas matplotlib seaborn nbformat nbconvert jupyter_client ipykernel
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install numpy pandas matplotlib seaborn nbformat nbconvert jupyter_client ipykernel
 
-    - name: Run notebook
-      run: |
-        jupyter nbconvert --to notebook --execute climate_eda.ipynb --output executed_climate_eda.ipynb
+      - name: Run notebook
+        run: |
+          jupyter nbconvert --to notebook --execute climate_eda.ipynb --output executed_climate_eda.ipynb
 
-    - name: Run tests and calculate grade
-      run: |
-        # Run tests using the correct test file
-        python -m unittest test_assignment.py
+      - name: Run tests
+        run: |
+          python -m unittest test_assignment.py
 
-        # Extract grade from test output
-        GRADE=$(python -c "
+      - name: Calculate grade
+        run: |
+          # Use a HEREDOC to embed Python code safely
+          GRADE=$(python - <<EOF
 import unittest
 from test_assignment import TestClimateEDA
 
@@ -45,25 +46,26 @@ except Exception as e:
     print(f'Error calculating grade: {e}')
     grade = 0
 print(grade)
-        ")
+EOF
+          )
 
-        # Debugging Output
-        echo "Extracted Grade: $GRADE"
+          # Debugging Output
+          echo "Extracted Grade: $GRADE"
 
-        # Ensure GRADE is not empty before setting it
-        if [[ -z "$GRADE" ]]; then
-          echo 'GRADE could not be determined! Setting to 0.'
-          GRADE=0
-        fi
+          # Ensure GRADE is not empty before setting it
+          if [[ -z "$GRADE" ]]; then
+            echo 'GRADE could not be determined! Setting to 0.'
+            GRADE=0
+          fi
 
-        echo "GRADE=$GRADE" >> $GITHUB_ENV
+          echo "GRADE=$GRADE" >> $GITHUB_ENV
 
-    - name: Create grade summary
-      run: |
-        echo "## Assignment Grade: ${{ env.GRADE }}/100" > grade_summary.md
+      - name: Create grade summary
+        run: |
+          echo "## Assignment Grade: ${{ env.GRADE }}/100" > grade_summary.md
 
-    - name: Upload grade summary
-      uses: actions/upload-artifact@v4
-      with:
-        name: grade-summary
-        path: grade_summary.md
+      - name: Upload grade summary
+        uses: actions/upload-artifact@v4
+        with:
+          name: grade-summary
+          path: grade_summary.md
