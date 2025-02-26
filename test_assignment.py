@@ -39,18 +39,15 @@ class TestClimateEDA(unittest.TestCase):
                     cls.df_name = match.group(1)
                     break
 
-
-
-        
     def test_required_libraries(self):
         """Test that all required libraries are imported"""
         required_libs = ['pandas', 'numpy', 'matplotlib', 'seaborn']
         for lib in required_libs:
-            self.assertIn(f"import {lib}", self.all_code, f"Missing required import for {lib}")
+            self.assertIn(f"import {lib}", TestClimateEDA.all_code, f"Missing required import for {lib}")
             
     def test_data_loading(self):
         """Test that climate data is loaded"""
-        self.assertIn("read_csv('data/Climate_Change_Indicators.csv')", self.all_code, "Data file not loaded correctly")
+        self.assertIn("read_csv('data/Climate_Change_Indicators.csv')", TestClimateEDA.all_code, "Data file not loaded correctly")
         
     def test_yearly_aggregation(self):
         """Test that data is aggregated by year"""
@@ -60,7 +57,7 @@ class TestClimateEDA(unittest.TestCase):
             r"groupby\(\s*['\"]\w+['\"]\s*\)\[['\"]\w+['\"]",
             r"resample\(\s*['\"]Y['\"]\s*\)"
         ]
-        found_yearly_agg = any(re.search(pattern, self.all_code) for pattern in yearly_agg_patterns)
+        found_yearly_agg = any(re.search(pattern, TestClimateEDA.all_code) for pattern in yearly_agg_patterns)
         self.assertTrue(found_yearly_agg, "No evidence of yearly data aggregation")
         
     def test_univariate_analysis(self):
@@ -72,20 +69,19 @@ class TestClimateEDA(unittest.TestCase):
             r"displot\(",
             r"kdeplot\("
         ]
-        found_univariate_vis = any(re.search(pattern, self.all_code) for pattern in univariate_vis_patterns)
+        found_univariate_vis = any(re.search(pattern, TestClimateEDA.all_code) for pattern in univariate_vis_patterns)
         self.assertTrue(found_univariate_vis, "No evidence of univariate visualizations")
         
         # Check for descriptive statistics
         stats_patterns = [r"describe\(", r"mean\(", r"median\(", r"std\(", r"min\(", r"max\("]
-        found_stats = any(re.search(pattern, self.all_code) for pattern in stats_patterns)
+        found_stats = any(re.search(pattern, TestClimateEDA.all_code) for pattern in stats_patterns)
         self.assertTrue(found_stats, "No evidence of descriptive statistics calculation")
         
     def test_bivariate_analysis(self):
         """Test for bivariate analysis"""
-                # Check if all_code is initialized before accessing it
-        if not hasattr(self, 'all_code') or self.all_code == "":
+        # ✅ Fix: Use `TestClimateEDA.all_code` instead of `self.all_code`
+        if not hasattr(TestClimateEDA, 'all_code') or TestClimateEDA.all_code == "":
             self.fail("all_code is not initialized or is empty.")
-        
 
         # Proceed with the bivariate analysis test
         bivariate_vis_patterns = [
@@ -97,12 +93,12 @@ class TestClimateEDA(unittest.TestCase):
             r"heatmap\(",
             r"corr\("
         ]
-        found_bivariate_vis = any(re.search(pattern, self.all_code) for pattern in bivariate_vis_patterns)
+        found_bivariate_vis = any(re.search(pattern, TestClimateEDA.all_code) for pattern in bivariate_vis_patterns)
         self.assertTrue(found_bivariate_vis, "No evidence of bivariate visualizations")
         
         # Check for correlation analysis
         corr_patterns = [r"corr\(", r"corrplot", r"corrcoef"]
-        found_corr = any(re.search(pattern, self.all_code) for pattern in corr_patterns)
+        found_corr = any(re.search(pattern, TestClimateEDA.all_code) for pattern in corr_patterns)
         self.assertTrue(found_corr, "No evidence of correlation analysis")
         
     def test_multivariate_analysis(self):
@@ -116,7 +112,7 @@ class TestClimateEDA(unittest.TestCase):
             r"radviz\(",
             r"3d scatter"
         ]
-        found_multivariate_vis = any(re.search(pattern, self.all_code) for pattern in multivariate_vis_patterns)
+        found_multivariate_vis = any(re.search(pattern, TestClimateEDA.all_code) for pattern in multivariate_vis_patterns)
         self.assertTrue(found_multivariate_vis, "No evidence of multivariate visualizations")
         
     def test_conclusions_present(self):
@@ -128,7 +124,7 @@ class TestClimateEDA(unittest.TestCase):
             r"[Ii]nsight",
             r"[Oo]bservation"
         ]
-        found_conclusion = any(re.search(pattern, self.all_markdown) for pattern in conclusion_patterns)
+        found_conclusion = any(re.search(pattern, TestClimateEDA.all_markdown) for pattern in conclusion_patterns)
         self.assertTrue(found_conclusion, "No evidence of conclusions or insights in the analysis")
         
     def test_min_number_of_visualizations(self):
@@ -138,15 +134,15 @@ class TestClimateEDA(unittest.TestCase):
             r"sns\.\w+\(",
             r"df\.\w+\.plot\("
         ]
-        num_vis = sum(len(re.findall(pattern, self.all_code)) for pattern in vis_function_patterns)
+        num_vis = sum(len(re.findall(pattern, TestClimateEDA.all_code)) for pattern in vis_function_patterns)
         self.assertGreaterEqual(num_vis, 5, "Insufficient number of visualizations (minimum 5 required)")
         
     def test_climate_variables_analyzed(self):
         """Test that all climate variables are analyzed"""
         climate_vars = ['Global Average Temperature (°C)', 'CO2 Concentration (ppm)', 'Sea Level Rise (mm)', 'Arctic Ice Area (million km²)']
         for var in climate_vars:
-            self.assertIn(var, self.all_code, f"Climate variable {var} not analyzed")
-
+            self.assertIn(var, TestClimateEDA.all_code, f"Climate variable {var} not analyzed")
+            
     def calculate_grade(self):
         """Calculate the grade based on passing tests"""
         # List of all test methods
@@ -166,11 +162,12 @@ class TestClimateEDA(unittest.TestCase):
         grade = (passed_tests / total_tests) * 100
         return round(grade)
 
+
 if __name__ == '__main__':
     test_suite = unittest.TestLoader().loadTestsFromTestCase(TestClimateEDA)
     test_runner = unittest.TextTestRunner(verbosity=2)
     test_result = test_runner.run(test_suite)
-    
+
     # Calculate and print grade
     test_case = TestClimateEDA()
     grade = test_case.calculate_grade()
