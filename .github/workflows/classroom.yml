@@ -33,8 +33,10 @@ jobs:
         python -m unittest test_assignment.py
 
         # Extract grade from test output
-        GRADE=$(python -c "import unittest
+        GRADE=$(python -c "
+import unittest
 from test_assignment import TestClimateEDA
+
 try:
     test_case = TestClimateEDA()
     grade = test_case.calculate_grade()
@@ -42,13 +44,14 @@ try:
 except Exception as e:
     print(f'Error calculating grade: {e}')
     grade = 0
-print(grade)")
+print(grade)
+        ")
 
         # Debugging Output
         echo "Extracted Grade: $GRADE"
 
         # Ensure GRADE is not empty before setting it
-        if [[ -z \"$GRADE\" ]]; then
+        if [[ -z "$GRADE" ]]; then
           echo 'GRADE could not be determined! Setting to 0.'
           GRADE=0
         fi
